@@ -1,0 +1,18 @@
+{% autoescape off %}
+Hi {{ user.first_name }},
+
+✅ Your order has been successfully received!
+
+🧾 **Order Details:**
+- Order Number: **{{ order.order_number }}**
+- Name: {{ order.full_name }}
+- Email: {{ order.email }}
+- Phone: {{ order.phone }}
+- Address: {{ order.full_address }}, {{ order.city }}, {{ order.state }}, {{ order.country }}
+
+🛒 You can track your order or contact us for support if needed.
+
+Thank you for shopping with us!  
+— Zafrocop Team
+
+{% endautoescape %}

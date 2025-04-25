@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     'store',
     'carts',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -151,3 +153,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'zafrocopsafetyshoes@gmail.com'
 EMAIL_HOST_PASSWORD = 'eexp wfyl deaz zfbh'
 EMAIL_USE_TLS = True
+
+RAZORPAY_KEY_ID = "rzp_test_xc0LpuVfsigL9y"
+RAZORPAY_KEY_SECRET = "0ylEFHvHTpiGyl2j3Yx1graX"
