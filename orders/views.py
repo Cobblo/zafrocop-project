@@ -86,7 +86,6 @@ def payments(request):
     body = json.loads(request.body)
     order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
 
-    # Create payment
     payment = Payment(
         user=request.user,
         payment_id=body['transID'],
@@ -100,7 +99,6 @@ def payments(request):
     order.is_ordered = True
     order.save()
 
-    # Move cart items to OrderProduct
     cart_items = CartItem.objects.filter(user=request.user)
     for item in cart_items:
         orderproduct = OrderProduct()
@@ -113,24 +111,16 @@ def payments(request):
         orderproduct.ordered = True
         orderproduct.save()
 
-        product_variation = item.variations.all()
-        orderproduct.variations.set(product_variation)
+        # Set variations here properly
+        orderproduct.variations.set(item.variations.all())
         orderproduct.save()
 
+        # Decrease stock
         product = item.product
         product.stock -= item.quantity
         product.save()
 
     CartItem.objects.filter(user=request.user).delete()
-
-    mail_subject = 'Thank you for your order!'
-    message = render_to_string('orders/order_recieved_email.html', {
-        'user': request.user,
-        'order': order,
-    })
-    to_email = request.user.email
-    send_email = EmailMessage(mail_subject, message, to=[to_email])
-    send_email.send()
 
     data = {
         'order_number': order.order_number,

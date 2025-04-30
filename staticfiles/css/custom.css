@@ -1,0 +1,23 @@
+/* --- Rating Stars Hide and Style --- */
+.rate input {
+    display: none;
+}
+
+.rate label {
+    float: right;
+    padding: 5px;
+    font-size: 30px;
+    color: #ccc;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.rate label:before {
+    content: '\2605'; /* Unicode black star */
+}
+
+.rate input:checked ~ label,
+.rate label:hover,
+.rate label:hover ~ label {
+    color: #ffc107;
+}
