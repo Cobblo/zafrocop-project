@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y bg">
+    <div class="container">
+        <div class="row">
+            <aside class="col-lg-9">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-borderless table-shopping-cart">
+                            <thead class="text-muted">
+                                <tr class="small text-uppercase">
+                                    <th scope="col">Product</th>
+                                    <th scope="col" width="120">Price</th>
+                                    <th scope="col" class="text-right" width="200">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in wishlist_items %}
+                                <tr>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <img src="{{ item.product.images.url }}" alt="{{ item.product.product_name }}" width="80" height="80">
+                                            </div>
+                                            <div class="col-md-9">
+                                                <a href="{% url 'product_detail' item.product.category.slug item.product.slug %}">
+                                                    {{ item.product.product_name }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>₹ {{ item.product.price }}</td>
+                                    <td class="text-right">
+                                        <a href="{% url 'remove_from_wishlist' item.product.id %}" class="btn btn-danger btn-sm">Remove</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="text-center font-weight-bold">Your wishlist is empty.</div>
+                                    </td>
+                                </tr>
+                                
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </aside>
+
+            <aside class="col-lg-3">
+                <div class="card">
+                    <div class="card-body">
+                        <center><h5 class="card-title">Your Wishlist</h5>
+                        <p>Total items: <strong>{{ wishlist_items|length }}</strong></p></center>
+                        <br>
+                        <a href="{% url 'store' %}" class="btn btn-primary btn-block">Continue Shopping</a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}

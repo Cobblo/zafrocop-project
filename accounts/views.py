@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
-from .forms import RegistrationForm
-from .models import Account
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import RegistrationForm, UserForm, UserProfileForm
+from .models import Account, UserProfile
+from orders.models import Order, OrderProduct
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
 from carts.models import Cart, CartItem
@@ -26,14 +27,17 @@ def register(request):
                 password=password,
             )
             user.phone_number = phone_number
-            user.is_active = True  # ✅ Make user active directly
+            user.is_active = True
             user.save()
+
+            # Create UserProfile automatically on registration
+            UserProfile.objects.create(user=user)
 
             messages.success(request, 'Your account has been created successfully!')
             return redirect('/accounts/login/?command=registration_success')
     else:
         form = RegistrationForm()
-   
+
     context = {
         'form': form,
     }
@@ -111,14 +115,22 @@ def logout(request):
 
 @login_required(login_url='login')
 def dashboard(request):
-    return render(request, 'accounts/dashboard.html')
+    orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
+    orders_count = orders.count()
+
+    userprofile = UserProfile.objects.get(user_id=request.user.id)
+    context = {
+        'orders_count': orders_count,
+        'userprofile': userprofile,
+    }
+    return render(request, 'accounts/dashboard.html', context)
 
 
 def forgotPassword(request):
     if request.method == 'POST':
         email = request.POST['email']
         if Account.objects.filter(email=email).exists():
-            request.session['reset_email'] = email  # Save email in session
+            request.session['reset_email'] = email
             return redirect('resetPassword')
         else:
             messages.error(request, 'Account with this email does not exist.')
@@ -140,7 +152,7 @@ def resetPassword(request):
             user = Account.objects.get(email=email)
             user.set_password(password)
             user.save()
-            del request.session['reset_email']  # Clear session
+            del request.session['reset_email']
             messages.success(request, 'Password reset successfully. You can now login.')
             return redirect('login')
         else:
@@ -148,3 +160,52 @@ def resetPassword(request):
             return redirect('resetPassword')
 
     return render(request, 'accounts/resetPassword.html')
+
+
+@login_required(login_url='login')
+def my_orders(request):
+    orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'accounts/my_orders.html', context)
+
+
+@login_required(login_url='login')
+def edit_profile(request):
+    # Ensure UserProfile exists for current user
+    userprofile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile has been updated.')
+            return redirect('edit_profile')
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = UserProfileForm(instance=userprofile)
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'userprofile': userprofile,
+    }
+    return render(request, 'accounts/edit_profile.html', context)
+
+@login_required(login_url='login')
+def order_detail(request, order_id): 
+    order_detail = OrderProduct.objects.filter(order__order_number=order_id)
+    order = Order.objects.get(order_number=order_id)
+    subtotal = 0
+    for i in order_detail:
+        subtotal += i.product_price * i.quantity
+
+    context = {
+        'order_detail': order_detail,
+        'order': order,
+        'subtotal': subtotal,
+    }
+    return render(request, 'accounts/order_detail.html', context)  

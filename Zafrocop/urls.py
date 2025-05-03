@@ -21,7 +21,8 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('secureadmin/', admin.site.urls),  # Real admin login here
+    path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),  # Fake admin
     path('', views.home, name='home'),
     path('store/', include('store.urls')),
     path('cart/', include('carts.urls')),

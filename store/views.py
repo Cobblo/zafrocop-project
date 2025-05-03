@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Product, ReviewRating
+from .models import Product, ReviewRating, ProductGallery
 from category.models import Category
 from carts.models import CartItem
 from django.db.models import Q
@@ -10,6 +10,8 @@ from django.http import HttpResponse
 from .forms import ReviewForm
 from django.contrib import messages
 from orders.models import OrderProduct
+from django.contrib.auth.decorators import login_required
+from .models import Wishlist
 # Create your views here.
 def store(request, category_slug=None):
     categories = None
@@ -54,11 +56,15 @@ def product_detail(request, category_slug, product_slug):
         # Get the reviews
     reviews = ReviewRating.objects.filter(product_id=single_product.id, status=True)    
 
+    # Get the product gallery
+    product_gallery = ProductGallery.objects.filter(product_id=single_product.id)
+
     context = {
         'single_product': single_product,
         'in_cart'       : in_cart, 
         'orderproduct': orderproduct,
         'reviews': reviews,
+        'product_gallery': product_gallery,
      }
 
 
@@ -100,4 +106,23 @@ def submit_review(request, product_id):
                 messages.success(request, 'Thank you! Your review has been submitted.')
                 return redirect(url)
 
+
+@login_required
+def wishlist(request):
+    wishlist_items = Wishlist.objects.filter(user=request.user)
+    context = {
+        'wishlist_items': wishlist_items,
+    }
+    return render(request, 'store/wishlist.html', context)
      
+@login_required
+def add_to_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    Wishlist.objects.get_or_create(user=request.user, product=product)
+    return redirect('wishlist')  # or wherever you want to redirect the user after adding
+
+@login_required
+def remove_from_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    Wishlist.objects.filter(user=request.user, product=product).delete()
+    return redirect('wishlist')  # Redirect to your wishlist view
