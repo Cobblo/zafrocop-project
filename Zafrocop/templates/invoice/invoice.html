@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+      color: #333;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .logo {
+      height: 80px;
+    }
+    h2 {
+      margin-bottom: 5px;
+      color: #000;
+    }
+    .section {
+      margin-top: 20px;
+    }
+    .section h3 {
+      margin-bottom: 5px;
+      color: #0d47a1;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .right {
+      text-align: right;
+    }
+    .total-row td {
+      font-weight: bold;
+      background-color: #fafafa;
+    }
+    .footer-note {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div>
+      <img src="{{ logo_url }}" class="logo" alt="Zafrocop Logo">
+    </div>
+    <div>
+      <p><strong>Order Number:</strong> {{ order.order_number }}<br>
+         <strong>Transaction ID:</strong> {{ payment.payment_id }}<br>
+         <strong>Order Date:</strong> {{ order.created_at|date:"d M Y" }}<br>
+         <strong>Status:</strong> Paid</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Billing From</h3>
+    <p>
+      Zafrocop<br>
+      58A, Thulasi Street, Kattupakkam<br>
+      Chennai-600056<br>
+      India<br>
+      8220773182
+    </p>
+  </div>
+
+  <div class="section">
+    <h3>Shipping Address</h3>
+    <p>
+      {{ order.full_name }}<br>
+      {{ order.address_line_1 }}<br>
+      {{ order.city }}, {{ order.state }}<br>
+      {{ order.country }}<br>
+      {{ order.phone }}
+    </p>
+  </div>
+
+  <div class="section">
+    <h3>Order Summary</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Unit Price</th>
+          <th>Qty</th>
+          <th>Tax (12%)</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in order_products %}
+        <tr>
+          <td>
+            {{ item.product.product_name }}<br>
+            {% if item.variations|length > 0 %}Color: {{ item.variations.0 }}<br>{% endif %}
+            {% if item.variations|length > 1 %}Size: {{ item.variations.1 }}{% endif %}
+          </td>
+          <td class="right">₹ {{ item.price|floatformat:2 }}</td>
+          <td class="right">{{ item.quantity }}</td>
+          <td class="right">₹ {{ item.tax|floatformat:2 }}</td>
+          <td class="right">₹ {{ item.line_total|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="total-row">
+          <td colspan="4" class="right">Sub Total</td>
+          <td class="right">₹ {{ subtotal|floatformat:2 }}</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="4" class="right">Shipping Charge</td>
+          <td class="right">₹ {{ shipping|floatformat:2 }}</td>
+        </tr>
+        
+        <tr class="total-row">
+          <td colspan="4" class="right">Tax</td>
+          <td class="right">₹ {{ tax|floatformat:2 }}</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="4" class="right">Grand Total</td>
+          <td class="right">₹ {{ grand_total|floatformat:2 }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <center><h3 class="footer-note">Thank You For Your Purchase</h3>
+  <p class="footer-note">This is a system-generated invoice and does not require a signature.</p></center>
+
+</body>
+</html>

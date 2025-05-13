@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="invoice-logo">
-                                <img src="{% static 'images/logo.png' %}" alt="Invoice logo" style="max-height: 50px;">
+                                <img src="{% static 'images/zafrocop_logo.jpg' %}" alt="Invoice logo" style="max-height: 50px;">
                             </div>
                         </div>
 
@@ -80,6 +80,10 @@
                                                 <th colspan="2" class="text-right">Sub Total:</th>
                                                 <th class="text-center">₹ {{ subtotal }}</th>
                                             </tr>
+                                            <tr>
+                                                <th colspan="2" class="text-right">Shipping Charge:</th>
+                                                <th class="text-center">₹ {{ shipping }}</th>
+                                            </tr>  
                                             <tr>
                                                 <th colspan="2" class="text-right">Tax:</th>
                                                 <th class="text-center">₹ {{ order.tax }}</th>

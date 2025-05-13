@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block content %}
-
 <section class="section-content padding-y bg">
     <div class="container">
 
@@ -80,6 +79,12 @@
                             <dt>Total price:</dt>
                             <dd class="text-right">₹ {{ total }}</dd>
                         </dl>
+                        
+                        <dl class="dlist-align">
+                            <dt>Shipping Charge:</dt>
+                            <dd class="text-right">₹{{ shipping }}</dd>
+                        </dl>
+                          
                         <dl class="dlist-align">
                             <dt>Tax:</dt>
                             <dd class="text-right">₹ {{ tax }}</dd>
@@ -97,7 +102,7 @@
                 </div>
 
                 <div class="alert alert-info mt-3" role="alert">
-                    UPI users: After scanning the QR and making payment, please wait 10–15 seconds for confirmation.
+                    UPI users: After scanning the QR and making payment, please wait for Razorpay to confirm the transaction.
                 </div>
             </aside>
         </div>
@@ -168,29 +173,6 @@ document.getElementById('rzp-button').onclick = function(e) {
     const rzp = new Razorpay(options);
     rzp.open();
 };
-</script>
-
-<!-- Optional fallback for UPI QR payments (after 15 sec auto-check) -->
-<script>
-setTimeout(() => {
-    fetch("{% url 'payments' %}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken,
-        },
-        body: JSON.stringify({
-            orderID: "{{ order.order_number }}",
-            transID: "{{ order.razorpay_order_id }}_upi_fallback",
-            payment_method: "UPI",
-            status: "Paid"
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        window.location.href = "{% url 'order_complete' %}?order_number=" + data.order_number + "&payment_id=" + data.transID;
-    });
-}, 15000);
 </script>
 
 {% endblock %}

@@ -9,7 +9,7 @@
 
 <title>www.zafrocop</title>
 
-<link href="{% static 'images/zafrocop_logo.jpg' %}" rel="shortcut icon" type="image/x-icon">
+<link href="{% static 'images/zafrocop_logo1.jpg' %}" rel="shortcut icon" type="image/x-icon">
 
 <!-- jQuery -->
 <script src="{% static 'js/jquery-2.0.0.min.js' %}" type="text/javascript"></script>
@@ -20,39 +20,108 @@
 
 <!-- Font awesome 5 -->
 <link href="{% static 'fonts/fontawesome/css/all.min.css' %}" type="text/css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <!-- custom style -->
 <link href="{% static 'css/ui.css' %}" rel="stylesheet" type="text/css"/>
 <link href="{% static 'css/responsive.css' %}" rel="stylesheet" media="only screen and (max-width: 1200px)" />
-
 <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <!-- custom javascript -->
 <script src="{% static 'js/script.js' %}" type="text/javascript"></script>
 
+<style>
+/* Scroll to Top button */
+.scroll-top {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 40px;
+    height: 40px;
+    background: #0d6efd;
+    color: #fff;
+    border-radius: 50%;
+    display: none;
+    z-index: 999;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+.scroll-top:hover {
+    background: #0056b3;
+}
+
+/* WhatsApp floating button */
+.whatsapp-float {
+    position: fixed;
+    bottom: 80px; /* above scroll button */
+    right: 20px;
+    background-color: #25d366;
+    color: white;
+    border-radius: 50%;
+    padding: 12px;
+    font-size: 24px;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+.whatsapp-float:hover {
+    background-color: #128c7e;
+}
+</style>
+
 <script type="text/javascript">
-/// some script
-
-// jquery ready start
-$(document).ready(function() {
-	// jQuery code
-
-}); 
-// jquery end
+    // Scroll button visibility
+    window.addEventListener("scroll", function () {
+        const scrollTop = document.getElementById("scroll-top");
+        if (window.scrollY > 100) {
+            scrollTop.style.display = "flex";
+        } else {
+            scrollTop.style.display = "none";
+        }
+    });
 </script>
 
 </head>
 <body>
 
+    <!-- Navbar -->
+    {% include 'includes/navbar.html' %}
 
-
-    <!-- navbar -->
-     {% include 'includes/navbar.html' %}
-
+    <!-- Main content -->
     {% block content %}
-
     {% endblock %}
 
+    <!-- Footer -->
+    {% include 'includes/footer.html' %}
 
-{% include 'includes/footer.html' %}  
+     <!-- WhatsApp Button -->
+    <a href="https://wa.me/8220094926" target="_blank" class="whatsapp-float" title="Chat with us">
+        <i class="fa fa-whatsapp"></i>
+    </a>
+
+    <!-- Scroll to Top Button -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+        <i class="fa fa-arrow-up"></i>  <!-- Using Font Awesome icon instead of Bootstrap Icons -->
+    </a>
+
+    <script>
+        // Show scroll-to-top button
+        window.addEventListener("scroll", function () {
+            const scrollTop = document.getElementById("scroll-top");
+            if (window.scrollY > 100) {
+                scrollTop.style.display = "flex";
+            } else {
+                scrollTop.style.display = "none";
+            }
+        });
+    
+        // Scroll smoothly to top
+        document.getElementById("scroll-top").addEventListener("click", function (e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    </script>
+    
+
+</body>
+</html>

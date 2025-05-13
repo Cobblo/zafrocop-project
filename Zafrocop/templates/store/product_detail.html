@@ -97,11 +97,12 @@
                     <div>
                         <label>How do you rate this product?</label><br>
                         <div class="rate">
-                            {% for value in 1|stars_range %}
-                                <input type="radio" name="rating" id="rating{{ value }}" value="{{ value|adjust }}" required />
-                                <label for="rating{{ value }}" {% if value|divisibleby:2 %}title="{{ value|adjust }}" class="half"{% endif %}></label>
+                            {% for value in "54321" %}
+                                <input type="radio" id="star{{ value }}" name="rating" value="{{ value }}" required />
+                                <label for="star{{ value }}" title="{{ value }} stars"></label>
                             {% endfor %}
                         </div>
+                        
 
                         <br>
                         Review:

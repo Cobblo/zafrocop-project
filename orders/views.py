@@ -10,8 +10,14 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 import razorpay
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from .utils import send_invoice_email
+from django.templatetags.static import static
+from orders.utils import calculate_shipping_charge
+
 
 # STEP 1: PLACE ORDER & CREATE RAZORPAY ORDER
+@login_required
 def place_order(request, total=0, quantity=0):
     current_user = request.user
     cart_items = CartItem.objects.filter(user=current_user)
@@ -23,7 +29,7 @@ def place_order(request, total=0, quantity=0):
     for item in cart_items:
         total += (item.product.price * item.quantity)
         quantity += item.quantity
-    tax = (2 * total) / 100
+    tax = (12 * total) / 100
     grand_total = total + tax
 
     if request.method == 'POST':
@@ -41,7 +47,9 @@ def place_order(request, total=0, quantity=0):
             data.state = form.cleaned_data['state']
             data.city = form.cleaned_data['city']
             data.order_note = form.cleaned_data['order_note']
-            data.order_total = grand_total
+            shipping_charge = calculate_shipping_charge(form.cleaned_data['state'])
+            data.order_total = grand_total + shipping_charge
+            data.shipping_charge = shipping_charge  
             data.tax = tax
             data.ip = request.META.get('REMOTE_ADDR')
             data.save()
@@ -54,7 +62,7 @@ def place_order(request, total=0, quantity=0):
 
             # Razorpay integration
             client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-            amount = int(grand_total * 100)  # convert to paise
+            amount = int((grand_total + shipping_charge) * 100)  # convert to paise
 
             razorpay_order = client.order.create({
                 'amount': amount,
@@ -72,7 +80,8 @@ def place_order(request, total=0, quantity=0):
                 'cart_items': cart_items,
                 'total': total,
                 'tax': tax,
-                'grand_total': grand_total,
+                'shipping': shipping_charge,
+                'grand_total': grand_total + shipping_charge,
                 'razorpay_order_id': razorpay_order['id'],
                 'razorpay_key': settings.RAZORPAY_KEY_ID,
                 'razorpay_amount': amount,
@@ -82,6 +91,7 @@ def place_order(request, total=0, quantity=0):
         return redirect('checkout')
 
 # STEP 2: HANDLE PAYMENT RESPONSE & SAVE ORDER
+@login_required
 def payments(request):
     body = json.loads(request.body)
     order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
@@ -139,6 +149,8 @@ def order_complete(request):
 
         subtotal = sum(item.product_price * item.quantity for item in ordered_products)
         payment = Payment.objects.get(payment_id=transID)
+        send_invoice_email(order, payment, ordered_products)
+        
 
         context = {
             'order': order,
@@ -147,7 +159,13 @@ def order_complete(request):
             'transID': payment.payment_id,
             'payment': payment,
             'subtotal': subtotal,
+            'shipping': order.shipping_charge,
         }
         return render(request, 'orders/order_complete.html', context)
     except (Order.DoesNotExist, Payment.DoesNotExist):
         return redirect('home')
+
+@login_required
+def order_status(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'orders/order_status.html', {'orders': orders})

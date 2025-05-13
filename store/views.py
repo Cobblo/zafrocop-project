@@ -12,6 +12,8 @@ from django.contrib import messages
 from orders.models import OrderProduct
 from django.contrib.auth.decorators import login_required
 from .models import Wishlist
+from banners.models import Banner
+
 # Create your views here.
 def store(request, category_slug=None):
     categories = None
@@ -126,3 +128,12 @@ def remove_from_wishlist(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     Wishlist.objects.filter(user=request.user, product=product).delete()
     return redirect('wishlist')  # Redirect to your wishlist view
+
+def home(request):
+    products = Product.objects.filter(is_available=True)[:8]
+    banners = Banner.objects.filter(is_active=True)
+    context = {
+        'products': products,
+        'banners': banners,
+    }
+    return render(request, 'home.html', context)

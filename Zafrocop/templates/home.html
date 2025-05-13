@@ -3,53 +3,84 @@
 
 {% block content %}
 
-
 <!-- ========================= SECTION MAIN ========================= -->
+{% if banners %}
+<style>
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 40px;
+    height: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+  }
+
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-size: 60% 60%;
+  }
+</style>
+
 <section class="section-intro padding-y-sm">
-<div class="container">
+  <div class="container">
 
-<div class="intro-banner-wrap">
-	<img src="{% static 'images/banners/zafrocop.png' %}" class="img-fluid rounded">
-</div>
+    <div id="bannerCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
+      <div class="carousel-inner">
+        {% for banner in banners %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <img src="{{ banner.image.url }}" class="d-block w-100" alt="{{ banner.title }}">
+        </div>
+        {% endfor %}
+      </div>
 
-</div> <!-- container //  -->
+      <!-- Optional: Smaller navigation controls -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        
+      </button>
+    </div>
+
+  </div> <!-- container // -->
 </section>
+{% endif %}
 <!-- ========================= SECTION MAIN END// ========================= -->
 
-<!-- ========================= SECTION  ========================= -->
+
+<!-- ========================= SECTION ========================= -->
 <section class="section-name padding-y-sm">
-<div class="container">
+  <div class="container">
 
-<header class="section-heading">
-	<a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
-	<h3 class="section-title">Popular products</h3>
-</header><!-- sect-heading -->
+    <header class="section-heading">
+      <a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
+      <h3 class="section-title">Popular products</h3>
+    </header>
 
-	
-<div class="row">
-	{% for product in products %}
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="{{ product.get_url }}" class="img-wrap"> <img src="{{ product.images.url }}"> </a>
-			<figcaption class="info-wrap">
-				<a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
-				<div class="price mt-1">₹ {{ product.price }}</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	{% endfor %}
-</div> <!-- row.// -->
+    <div class="row">
+      {% for product in products %}
+      <div class="col-md-3">
+        <div class="card card-product-grid">
+          <a href="{{ product.get_url }}" class="img-wrap">
+            <img src="{{ product.images.url }}">
+          </a>
+          <figcaption class="info-wrap">
+            <a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
+            <div class="price mt-1">₹ {{ product.price }}</div>
+          </figcaption>
+        </div>
+      </div>
+      {% endfor %}
+    </div> <!-- row.// -->
 
-</div><!-- container // -->
+  </div>
 </section>
-<!-- ========================= SECTION  END// ========================= -->
+<!-- ========================= SECTION END// ========================= -->
 
-
-
-
-
-
-</body>
-</html>
+<!-- ✅ Bootstrap JS (required for carousel to work) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 {% endblock %}
