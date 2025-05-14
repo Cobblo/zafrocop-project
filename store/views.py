@@ -137,3 +137,16 @@ def home(request):
         'banners': banners,
     }
     return render(request, 'home.html', context)
+
+
+def shipping_policy(request):
+    return render(request, 'store/shipping_policy.html')
+
+def terms_and_conditions(request):
+    return render(request, 'store/terms_and_conditions.html')
+
+def privacy_policy(request):
+    return render(request, 'store/privacy_policy.html')
+
+def return_and_refund(request):
+    return render(request, 'store/return_and_refund.html')        

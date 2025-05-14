@@ -61,32 +61,93 @@ ul.thumb li img{
 }
 
 /* --- Footer Styling --- */
-#footer {
-    background-color: #898989; /* Light background, adjust as needed */
-    padding: 40px 0;
+.site-footer {
+    background-color: #2a2727;
+    color: #f5f5f5;
+    padding: 40px 20px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 16px;
+}
+  
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: auto;
+}
+  
+.footer-section {
+    flex: 1 1 250px;
+    margin: 20px 0;
+}
+  
+.footer-section h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+  
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+  
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+  
+.footer-section ul li a {
+    color: #f0f0f0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+  
+.footer-section ul li a:hover {
+    color: #e0b04a;
+}
+  
+.footer-section p {
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+  
+.footer-section i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+  
+.social-icons a {
+    color: #f5f5f5;
+    margin-right: 15px;
+    font-size: 20px;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+  
+.social-icons a:hover {
+    transform: scale(1.2);
+    color: #e0b04a;
+}
+  
+.footer-bottom {
+    border-top: 1px solid #444;
+    margin-top: 30px;
+    padding-top: 20px;
+    text-align: center;
+    font-size: 14px;
+}
+  
+.footer-bottom a {
+    color: #e0b04a;
+    text-decoration: none;
+}
+  
+.footer-bottom a:hover {
+    text-decoration: underline;
 }
 
-.footer_text,
-.useful_text,
-.location_text a {
-    color: #fff;
-}
-
-/* Background for the whole section */
-body {
-    background-color: #f5f0eb; /* Soft beige like the reference */
-}
-
-/* Optional: Add padding/margin to separate sections */
-.section-padding {
-    padding: 40px 0;
-}
-
-/* Footer background styling */
-.footer_section {
-    background-color: #f5f0eb; /* Match footer with the background */
-    padding: 40px 0;
-}
 
 /* WhatsApp floating button - perfectly round */
 .whatsapp-float {

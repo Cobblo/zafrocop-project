@@ -31,4 +31,8 @@ urlpatterns = [
 
     # orders
     path('orders/', include('orders.urls')),
+    path('shipping-policy/', views.shipping_policy, name='shipping_policy'),
+    path('terms-and-conditions/', views.terms_and_conditions, name='terms_and_conditions'),
+    path('policy/', views.privacy_policy, name='privacy_policy'),
+    path('return-and-refund/', views.return_and_refund, name='return_and_refund'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
